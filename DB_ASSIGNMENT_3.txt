@@ -1,0 +1,67 @@
+--------------------------------------------------------------< Database Assignment 3 >------------------------------------------------------
+
+1.Fetch all users name from database.
+
+> SELECT USERNAME FROM USERS;
+
+
+2.Fetch all tweets of user by user id most recent tweets first.
+
+> SELECT USERID,CONTENT,CREATETIME 
+  FROM TWEETS  
+  WHERE COMMENTPARENTID IS NULL 
+  ORDER BY CREATETIME DESC;
+
+
+3.Fetch like count of particular tweet by tweet id.
+
+We can implement the 3 - 7 queries for particular id and all ids.	
+For particular tweet id:
+	> SELECT COUNT(*) AS LIKE_COUNT 
+    	  FROM LIKES 
+	  WHERE TWEETID = 1;
+For all tweet ids:
+	> SELECT TWEETS.TWEETID, COUNT(LIKES.TWEETID) AS LIKES 
+	  FROM TWEETS 
+	  LEFT JOIN LIKES ON TWEETS.TWEETID = LIKES.TWEETID 
+	  GROUP BY TWEETS.TWEETID;
+
+
+4.Fetch retweet count of particular tweet by tweet id.
+
+> SELECT COUNT(*) AS RETWEET_COUNT 
+  FROM RETWEETS 
+  WHERE ORIGINALTWEETID = 1;
+
+
+5.Fetch comment count of particular tweet by tweet id.
+
+> SELECT COUNT(*) AS COMMENT_COUNT 
+  FROM TWEETS 
+  WHERE COMMENTPARENTID = 2;
+
+
+6.Fetch all user’s name who have retweeted particular tweet by tweet id.
+
+> SELECT USERS.USERNAME 
+  FROM RETWEETS 
+  JOIN USERS ON RETWEETS.USERID = USERS.USERID
+  WHERE RETWEETS.ORIGINALTWEETID = 1;
+
+
+7.Fetch all commented tweet’s content for particular tweet by tweet id.
+>  SELECT CONTENT
+   FROM TWEETS
+   WHERE TWEETS.COMMENTPARENTID = 2;
+
+
+8.Fetch user’s timeline (All tweets from users whom I am following with tweet content and user name who has tweeted it)
+> SELECT Users.userName,Tweets.content
+  FROM Tweets
+  JOIN Users ON Tweets.userId = Users.userId
+  WHERE Tweets.userId IN (
+      SELECT FollowedUserID
+      FROM Followers
+      WHERE FollowerUserID = 1
+  )
+  ORDER BY Tweets.createTime DESC;
